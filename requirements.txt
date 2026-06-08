@@ -1,0 +1,22 @@
+# Core training stack — used in notebooks / local model development (Phase A)
+# Install with: pip install -r requirements.txt
+
+pandas>=2.0.0
+numpy>=1.24.0
+scikit-learn>=1.3.0
+xgboost>=2.0.0
+tensorflow>=2.15.0
+scipy>=1.11.0
+
+# Visualization (EDA + cluster plots)
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.18.0
+
+# Experiment tracking & model persistence
+mlflow>=2.9.0
+joblib>=1.3.0
+
+# Notebook environment
+jupyter>=1.0.0
+ipykernel>=6.27.0
