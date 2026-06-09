@@ -1,0 +1,85 @@
+{
+  "analysis_methods": [
+    "pearson_correlation",
+    "vif_with_add_constant",
+    "rf_importance"
+  ],
+  "vif_evidence": {
+    "run1_all_8_numerics": {
+      "carat": 861.11,
+      "depth": 40.58,
+      "table": 1.39,
+      "x": 538.36,
+      "y": 469.41,
+      "z": 433.95,
+      "volume": 1215.24,
+      "dimension_ratio": 37.49
+    },
+    "run2_drop_xyz": {
+      "carat": 806.78,
+      "depth": 37.45,
+      "table": 1.38,
+      "volume": 801.07,
+      "dimension_ratio": 36.91
+    },
+    "run3_final_set": {
+      "carat": 806.51,
+      "depth": 1.44,
+      "table": 1.38,
+      "volume": 800.8
+    },
+    "note": "VIF computed with statsmodels add_constant() on transformed features (sqrt/log1p applied per Section 5). add_constant is required to avoid artificially inflated VIFs from OLS forced through origin."
+  },
+  "rf_importance_top5": {
+    "volume": 0.8956,
+    "carat": 0.0542,
+    "clarity": 0.0311,
+    "color": 0.0143,
+    "depth": 0.0018
+  },
+  "dropped_features": {
+    "x": {
+      "reason": "Absorbed by volume (x*y*z). Mutual r>0.97 with y/z. VIF=538 in Run 1.",
+      "vif_run1": 538.36,
+      "corr_with_volume": 0.9973
+    },
+    "y": {
+      "reason": "Absorbed by volume (x*y*z). Mutual r>0.97 with x/z. VIF=469 in Run 1.",
+      "vif_run1": 469.41,
+      "corr_with_volume": 0.9972
+    },
+    "z": {
+      "reason": "Absorbed by volume (x*y*z). Mutual r>0.97 with x/y. VIF=434 in Run 1.",
+      "vif_run1": 433.95,
+      "corr_with_volume": 0.9947
+    },
+    "dimension_ratio": {
+      "reason": "r(depth, dimension_ratio)=-0.9864 -- near-perfect anti-collinearity. Geometric duplicate of depth: dimension_ratio=(x+y)/2z, depth_pct=200z/(x+y). RF importance=0.0013 (0.13%) -- negligible predictive value. KEEP depth: standard gemological metric, interpretable, VIF=1.44 after this drop.",
+      "pearson_r_with_depth": -0.9864,
+      "vif_run2": 36.91,
+      "rf_importance_with_dimension_ratio": 0.0013
+    }
+  },
+  "collinearity_notes": {
+    "carat_volume": {
+      "pearson_r": 0.9991,
+      "vif_run3_carat": 806.51,
+      "vif_run3_volume": 800.8,
+      "decision": "Keep both for tree-based models (RF, XGBoost) and ANN -- these are immune to collinearity between features. For linear regression: apply Ridge regularization.",
+      "rationale": "Both carry genuine signal. Tree models select the more informative split; collinearity between predictors does not bias their predictions. Linear regression requires Ridge (L2 regularization) to shrink collinear coefficient magnitudes and stabilize estimates."
+    }
+  },
+  "pipeline": "clustering",
+  "features": [
+    "carat",
+    "volume",
+    "depth",
+    "table",
+    "cut",
+    "color",
+    "clarity",
+    "carat_category",
+    "price_per_carat"
+  ],
+  "note": "price_per_carat included -- price is dropped before clustering so price_per_carat is not leaking the target."
+}
