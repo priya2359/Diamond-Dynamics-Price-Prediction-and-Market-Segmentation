@@ -1,0 +1,27 @@
+{
+  "log1p_columns": [
+    "price",
+    "dimension_ratio"
+  ],
+  "sqrt_columns": [
+    "carat",
+    "volume",
+    "table",
+    "price_per_carat"
+  ],
+  "no_transform_columns": [
+    "x",
+    "y",
+    "z",
+    "depth",
+    "price_inr",
+    "carat_category"
+  ],
+  "price_transform": {
+    "forward": "log1p",
+    "inverse": "expm1",
+    "apply_before_training": true,
+    "inverse_apply_at_inference": true,
+    "note": "Model trained on log1p(price_usd). At inference: price_usd = expm1(model_output), then price_inr = price_usd * USD_TO_INR. Do NOT use np.exp \u2014 that adds +1 to every prediction."
+  }
+}

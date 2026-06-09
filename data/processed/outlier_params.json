@@ -1,0 +1,53 @@
+{
+  "method": "winsorize",
+  "iqr_multiplier": 1.5,
+  "zscore_threshold": 3.0,
+  "iqr_fences": {
+    "carat": {
+      "lower": -0.56,
+      "upper": 2.0
+    },
+    "price": {
+      "lower": -5612.625,
+      "upper": 11890.375
+    },
+    "x": {
+      "lower": 1.965,
+      "upper": 9.285
+    },
+    "y": {
+      "lower": 1.99,
+      "upper": 9.27
+    },
+    "z": {
+      "lower": 1.215,
+      "upper": 5.735
+    },
+    "volume": {
+      "lower": -93.216861,
+      "upper": 329.281643
+    },
+    "dimension_ratio": {
+      "lower": 1.541125,
+      "upper": 1.696443
+    }
+  },
+  "zscore_fences": {
+    "depth": {
+      "lower": 57.458352,
+      "upper": 66.037807,
+      "z_lower": 57.458352,
+      "z_upper": 66.037807,
+      "physical_lower": 50.0,
+      "physical_upper": 75.0
+    },
+    "table": {
+      "lower": 50.757072,
+      "upper": 64.159146,
+      "z_lower": 50.757072,
+      "z_upper": 64.159146,
+      "physical_lower": 50.0,
+      "physical_upper": 70.0
+    }
+  }
+}

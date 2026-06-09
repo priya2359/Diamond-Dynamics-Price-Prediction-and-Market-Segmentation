@@ -60,6 +60,16 @@ CARAT_CATEGORY_BINS = [0, 0.5, 1.5, float("inf")]
 CARAT_CATEGORY_LABELS = ["Light", "Medium", "Heavy"]
 
 # ---------------------------------------------------------------------------
+# Outlier handling hyperparameters
+# ---------------------------------------------------------------------------
+IQR_MULTIPLIER = 1.5
+ZSCORE_THRESHOLD = 3.0
+# Physical constraints from gemological standards — values outside these
+# ranges are measurement errors regardless of Z-score.
+DEPTH_PHYSICAL_BOUNDS = (50.0, 75.0)   # depth % valid range
+TABLE_PHYSICAL_BOUNDS = (50.0, 70.0)   # table % valid range
+
+# ---------------------------------------------------------------------------
 # MLflow
 # ---------------------------------------------------------------------------
 MLFLOW_TRACKING_URI = os.getenv(
