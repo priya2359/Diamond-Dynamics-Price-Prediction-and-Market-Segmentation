@@ -1,0 +1,83 @@
+{
+  "description": "Ordinal encoding map for quality-grade categorical features. All codes are 0-indexed (0 = lowest quality). Ordering is fixed by gemological standards -- see CLAUDE.md Exact Encoding Orders.",
+  "features": {
+    "cut": {
+      "categories_in_order": [
+        "Fair",
+        "Good",
+        "Very Good",
+        "Premium",
+        "Ideal"
+      ],
+      "code_map": {
+        "Fair": 0,
+        "Good": 1,
+        "Very Good": 2,
+        "Premium": 3,
+        "Ideal": 4
+      },
+      "n_levels": 5
+    },
+    "color": {
+      "categories_in_order": [
+        "J",
+        "I",
+        "H",
+        "G",
+        "F",
+        "E",
+        "D"
+      ],
+      "code_map": {
+        "J": 0,
+        "I": 1,
+        "H": 2,
+        "G": 3,
+        "F": 4,
+        "E": 5,
+        "D": 6
+      },
+      "n_levels": 7
+    },
+    "clarity": {
+      "categories_in_order": [
+        "I1",
+        "SI2",
+        "SI1",
+        "VS2",
+        "VS1",
+        "VVS2",
+        "VVS1",
+        "IF"
+      ],
+      "code_map": {
+        "I1": 0,
+        "SI2": 1,
+        "SI1": 2,
+        "VS2": 3,
+        "VS1": 4,
+        "VVS2": 5,
+        "VVS1": 6,
+        "IF": 7
+      },
+      "n_levels": 8
+    },
+    "carat_category": {
+      "categories_in_order": [
+        "Light",
+        "Medium",
+        "Heavy"
+      ],
+      "code_map": {
+        "Light": 0,
+        "Medium": 1,
+        "Heavy": 2
+      },
+      "n_levels": 3
+    }
+  },
+  "notes": {
+    "indexing": "0-indexed. Fair=0, Ideal=4. J=0, D=6. I1=0, IF=7. Light=0, Heavy=2.",
+    "sklearn_pipeline": "In Section 8 ColumnTransformer, build_ordinal_encoder() from src/features/encode.py produces an OrdinalEncoder with these same category orders. Fit on train set only -- result identical since categories are explicitly specified, not inferred from data."
+  }
+}
