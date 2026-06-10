@@ -1,0 +1,68 @@
+{
+  "features": [
+    "carat",
+    "volume",
+    "depth",
+    "table",
+    "carat_category",
+    "clarity",
+    "color",
+    "cut"
+  ],
+  "target": "price (log1p(price_usd))",
+  "split": {
+    "test_size": 0.2,
+    "val_size": 0.2,
+    "random_state": 42,
+    "n_train": 34428,
+    "n_val": 8607,
+    "n_train_full": 43035,
+    "n_test": 10759
+  },
+  "metrics": {
+    "linear_regression": {
+      "mae": 830.2156,
+      "mse": 3261227.8491,
+      "rmse": 1805.887,
+      "r2": 0.714,
+      "r2_log_scale": 0.9541
+    },
+    "decision_tree": {
+      "mae": 264.9244,
+      "mse": 218337.7526,
+      "rmse": 467.2663,
+      "r2": 0.9809,
+      "r2_log_scale": 0.9856
+    },
+    "random_forest": {
+      "mae": 219.633,
+      "mse": 158802.0332,
+      "rmse": 398.4997,
+      "r2": 0.9861,
+      "r2_log_scale": 0.9886
+    },
+    "knn": {
+      "mae": 290.987,
+      "mse": 253035.1406,
+      "rmse": 503.026,
+      "r2": 0.9778,
+      "r2_log_scale": 0.9778
+    },
+    "xgboost": {
+      "mae": 212.0427,
+      "mse": 138262.55,
+      "rmse": 371.8367,
+      "r2": 0.9879,
+      "r2_log_scale": 0.9906
+    },
+    "ann": {
+      "mae": 392.4051,
+      "mse": 455145.5691,
+      "rmse": 674.6448,
+      "r2": 0.9601,
+      "r2_log_scale": 0.981
+    }
+  },
+  "best_overall": "xgboost",
+  "best_sklearn": "xgboost"
+}
