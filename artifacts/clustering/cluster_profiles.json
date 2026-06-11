@@ -1,0 +1,29 @@
+{
+  "k": 2,
+  "clusters": {
+    "0": {
+      "count": 26291,
+      "avg_carat": 0.41910729907572936,
+      "avg_price_per_carat_usd": 2620.971320725426,
+      "avg_price_usd": 1158.6302156631548,
+      "avg_price_inr": 96745.62300787342,
+      "dominant_cut": "Ideal",
+      "dominant_color": "E",
+      "dominant_clarity": "VS2",
+      "centroid_distance_p95": 3.3115578600041577,
+      "cluster_name": "Affordable Compact Diamonds"
+    },
+    "1": {
+      "count": 27503,
+      "avg_carat": 1.1493807948223829,
+      "avg_price_per_carat_usd": 5337.35194292635,
+      "avg_price_usd": 6193.831586554197,
+      "avg_price_inr": 549867.2372468458,
+      "dominant_cut": "Premium",
+      "dominant_color": "G",
+      "dominant_clarity": "SI1",
+      "centroid_distance_p95": 4.097139689880795,
+      "cluster_name": "Premium Heavy Diamonds"
+    }
+  }
+}

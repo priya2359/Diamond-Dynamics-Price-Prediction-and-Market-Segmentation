@@ -1,0 +1,124 @@
+{
+  "n_samples": 53794,
+  "features": [
+    "carat",
+    "volume",
+    "depth",
+    "table",
+    "price_per_carat",
+    "carat_category",
+    "clarity",
+    "color",
+    "cut"
+  ],
+  "k_selection": {
+    "k_range": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "results": {
+      "2": {
+        "inertia": 337125.6723614959,
+        "silhouette": 0.26498533429518395
+      },
+      "3": {
+        "inertia": 298002.0765173948,
+        "silhouette": 0.1966208289729074
+      },
+      "4": {
+        "inertia": 267943.9056091672,
+        "silhouette": 0.20169240829284305
+      },
+      "5": {
+        "inertia": 242575.3150839639,
+        "silhouette": 0.21432743158213446
+      },
+      "6": {
+        "inertia": 226836.60090821004,
+        "silhouette": 0.1826837922072012
+      },
+      "7": {
+        "inertia": 211790.7891383519,
+        "silhouette": 0.17680720773264885
+      },
+      "8": {
+        "inertia": 199837.07071962685,
+        "silhouette": 0.18346771788459465
+      },
+      "9": {
+        "inertia": 189753.69169338237,
+        "silhouette": 0.17131703660633338
+      },
+      "10": {
+        "inertia": 181316.079322016,
+        "silhouette": 0.1780230276156244
+      }
+    },
+    "best_k_by_silhouette": 2
+  },
+  "stability": {
+    "k": 2,
+    "seeds": [
+      0,
+      7,
+      13,
+      21,
+      42
+    ],
+    "pairwise_ari": [
+      0.9961,
+      0.9909,
+      0.988,
+      0.985,
+      0.9947,
+      0.9918,
+      0.9889,
+      0.9971,
+      0.9941,
+      0.9969
+    ],
+    "mean_ari": 0.9924,
+    "stable": true
+  },
+  "chosen_k": 2,
+  "final_kmeans": {
+    "inertia": 337125.6723614959,
+    "silhouette": 0.26498533429518395,
+    "cluster_sizes": {
+      "0": 26291,
+      "1": 27503
+    }
+  },
+  "pca": {
+    "explained_variance_ratio_2d": [
+      0.4266592992654541,
+      0.16122296530960617
+    ],
+    "explained_variance_ratio_3d": [
+      0.4266592992654541,
+      0.16122296530960617,
+      0.13885952751229008
+    ]
+  },
+  "dbscan_comparison": {
+    "min_samples": 18,
+    "eps": 1.6987418934406817,
+    "n_clusters": 1,
+    "noise_pct": 0.06320407480388147,
+    "silhouette": null
+  },
+  "hierarchical": "skipped -- O(n^2) infeasible at 53,794 rows; DBSCAN comparison satisfies the optional 'try different clustering techniques' requirement",
+  "targets": {
+    "silhouette_target": 0.4,
+    "silhouette_met": false,
+    "dbscan_noise_target_pct": 10,
+    "dbscan_noise_met": true
+  }
+}

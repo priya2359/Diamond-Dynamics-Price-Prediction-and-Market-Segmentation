@@ -144,3 +144,34 @@ ANN_TRAINING = {
     "reduce_lr_factor": 0.5,
     "reduce_lr_patience": 5,
 }
+
+# ---------------------------------------------------------------------------
+# Section 9 -- Clustering (K-Means + DBSCAN comparison) hyperparameters
+# ---------------------------------------------------------------------------
+MLFLOW_EXPERIMENT_CLUSTERING = "diamond_market_segmentation"
+
+K_RANGE = range(2, 11)
+
+KMEANS_PARAMS = {
+    "n_init": 10,
+    "random_state": RANDOM_STATE,
+}
+
+SILHOUETTE_SAMPLE_SIZE = 5000
+
+# DBSCAN comparison only (not the saved/serving model). min_samples = 2 * n_features
+# (9 clustering features) per the standard rule of thumb; eps chosen via KneeLocator
+# on the k-distance plot.
+DBSCAN_MIN_SAMPLES = 18
+
+# K-Means stability check: fit at the chosen K with several seeds, compare labelings
+# via Adjusted Rand Index. Below ARI_STABILITY_THRESHOLD => prefer a smaller, more
+# reproducible K even if its silhouette score is slightly lower.
+KMEANS_STABILITY_SEEDS = [0, 7, 13, 21, 42]
+ARI_STABILITY_THRESHOLD = 0.85
+
+# Dynamic cluster naming: tiers are assigned RELATIVE to the other clusters in the
+# same run (tertile rank of each cluster's mean among all cluster means), not on
+# absolute thresholds -- so naming works for any K in K_RANGE.
+CLUSTER_NAME_PRICE_TIERS = ["Affordable", "Mid-range", "Premium"]
+CLUSTER_NAME_SIZE_TIERS = ["Compact", "Balanced", "Heavy"]
