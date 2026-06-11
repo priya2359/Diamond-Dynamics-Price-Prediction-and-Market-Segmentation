@@ -175,3 +175,19 @@ ARI_STABILITY_THRESHOLD = 0.85
 # absolute thresholds -- so naming works for any K in K_RANGE.
 CLUSTER_NAME_PRICE_TIERS = ["Affordable", "Mid-range", "Premium"]
 CLUSTER_NAME_SIZE_TIERS = ["Compact", "Balanced", "Heavy"]
+
+# ---------------------------------------------------------------------------
+# Section 10 -- Streamlit input ranges/defaults
+# Bounds and defaults from data/processed/diamonds_clean.csv .describe().
+# `table` is defaulted (not collected) -- RF importance is negligible (Section 6),
+# keeping Module 1/2 forms aligned with the GUVI spec inputs (carat, x, y, z,
+# cut, color, clarity). `depth` is computed exactly as 200*z/(x+y) (the
+# diamonds dataset's own definition of depth%), also not collected.
+# ---------------------------------------------------------------------------
+INPUT_FEATURE_RANGES = {
+    "carat": {"min": 0.20, "max": 5.01, "default": 0.70, "step": 0.01},
+    "x": {"min": 3.73, "max": 10.74, "default": 5.70, "step": 0.01},
+    "y": {"min": 3.18, "max": 10.54, "default": 5.71, "step": 0.01},
+    "z": {"min": 1.07, "max": 8.06, "default": 3.53, "step": 0.01},
+}
+TABLE_DEFAULT = 57.0  # training-set median table %
