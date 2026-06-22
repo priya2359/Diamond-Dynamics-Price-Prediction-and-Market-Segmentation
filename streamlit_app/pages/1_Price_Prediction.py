@@ -11,7 +11,9 @@ _APP_DIR = Path(__file__).resolve().parents[1]
 if str(_APP_DIR) not in sys.path:
     sys.path.insert(0, str(_APP_DIR))
 
-from utils import load_regression_pipeline, prepare_input, render_diamond_input_form
+import requests
+
+from utils import predict_price, render_diamond_input_form
 
 st.set_page_config(page_title="Price Prediction - Diamond Dynamics", page_icon="\U0001F4B0")
 
@@ -25,9 +27,11 @@ st.caption(
 raw_input = render_diamond_input_form(key_prefix="price")
 
 if st.button("Predict Price", type="primary"):
-    pipeline = load_regression_pipeline()
-    result = prepare_input.predict_price(pipeline, **raw_input)
-
-    col1, col2 = st.columns(2)
-    col1.metric("Predicted Price (USD)", f"${result['price_usd']:,.2f}")
-    col2.metric("Predicted Price (INR)", f"₹{result['price_inr']:,.2f}")
+    try:
+        result = predict_price(raw_input)
+    except requests.exceptions.RequestException as exc:
+        st.error(f"Could not reach the prediction API: {exc}")
+    else:
+        col1, col2 = st.columns(2)
+        col1.metric("Predicted Price (USD)", f"${result['price_usd']:,.2f}")
+        col2.metric("Predicted Price (INR)", f"₹{result['price_inr']:,.2f}")

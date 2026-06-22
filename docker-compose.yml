@@ -1,0 +1,33 @@
+# filename: docker-compose.yml
+# purpose:  Phase 2A local orchestration -- FastAPI inference service +
+#           Streamlit UI. Streamlit calls FastAPI over HTTP via FASTAPI_URL
+#           (overridden here to the fastapi service name).
+# version:  1.0
+
+services:
+  fastapi:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      USD_TO_INR: ${USD_TO_INR:-83.5}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/v1/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: streamlit_app/Dockerfile
+    ports:
+      - "8501:8501"
+    environment:
+      FASTAPI_URL: http://fastapi:8000
+      USD_TO_INR: ${USD_TO_INR:-83.5}
+    depends_on:
+      fastapi:
+        condition: service_healthy

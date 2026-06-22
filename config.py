@@ -191,3 +191,11 @@ INPUT_FEATURE_RANGES = {
     "z": {"min": 1.07, "max": 8.06, "default": 3.53, "step": 0.01},
 }
 TABLE_DEFAULT = 57.0  # training-set median table %
+
+# ---------------------------------------------------------------------------
+# Section 11 -- FastAPI serving (Phase 2A)
+# Streamlit calls the FastAPI service over HTTP for all predictions.
+# Default targets a locally-running `uvicorn api.main:app` process; in
+# docker-compose this is overridden to http://fastapi:8000 (service name).
+# ---------------------------------------------------------------------------
+FASTAPI_URL = os.getenv("FASTAPI_URL", "http://localhost:8000")

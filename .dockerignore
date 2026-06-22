@@ -1,0 +1,35 @@
+# Phase 2A -- keep the Docker build context small. Build context is the
+# project root for both api/Dockerfile and streamlit_app/Dockerfile (see
+# docker-compose.yml). Do NOT exclude anything explicitly COPYed by either
+# Dockerfile (config.py, api/, src/, streamlit_app/, requirements-*.txt,
+# artifacts/regression/{best_model.pkl,model_comparison.csv},
+# artifacts/clustering/{kmeans_model.pkl,cluster_profiles.json,pca_2d.csv},
+# docs/figures/).
+
+venv/
+.venv/
+**/__pycache__/
+*.pyc
+
+.git/
+.gitignore
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Raw/processed data and MLflow store -- not needed by serving images
+data/
+artifacts/mlflow/
+mlruns/
+
+# Dev-only
+notebooks/
+tests/
+
+.env
+*.md
+*.pdf
+
+.claude/
+.vscode/
+.idea/

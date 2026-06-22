@@ -1,7 +1,9 @@
 # filename: streamlit_app/utils.py
-# purpose:  Cached pipeline/artifact loaders + shared input form for the
-#           Diamond Dynamics Streamlit app (Phase B -- load-only, no model.fit()).
-# version:  1.0
+# purpose:  HTTP client helpers (calls the FastAPI service for predictions),
+#           cached static-artifact loaders, and the shared input form for the
+#           Diamond Dynamics Streamlit app (Phase 2A -- no model.fit(),
+#           no joblib/sklearn -- inference happens in the FastAPI service).
+# version:  2.0
 
 # stdlib
 import json
@@ -9,8 +11,8 @@ import sys
 from pathlib import Path
 
 # third-party
-import joblib
 import pandas as pd
+import requests
 import streamlit as st
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -19,17 +21,20 @@ if str(PROJECT_ROOT) not in sys.path:
 
 # internal
 import config
-from src.inference import prepare_input
 
 
-@st.cache_resource(show_spinner="Loading price prediction model...")
-def load_regression_pipeline():
-    return joblib.load(config.REGRESSION_ARTIFACTS_DIR / "best_model.pkl")
+def predict_price(raw_input: dict) -> dict:
+    """Call POST /v1/predict/price on the FastAPI service."""
+    response = requests.post(f"{config.FASTAPI_URL}/v1/predict/price", json=raw_input, timeout=10)
+    response.raise_for_status()
+    return response.json()
 
 
-@st.cache_resource(show_spinner="Loading market segmentation model...")
-def load_clustering_pipeline():
-    return joblib.load(config.CLUSTERING_ARTIFACTS_DIR / "kmeans_model.pkl")
+def predict_segment(raw_input: dict) -> dict:
+    """Call POST /v1/predict/segment on the FastAPI service."""
+    response = requests.post(f"{config.FASTAPI_URL}/v1/predict/segment", json=raw_input, timeout=10)
+    response.raise_for_status()
+    return response.json()
 
 
 @st.cache_data(show_spinner=False)
