@@ -78,6 +78,18 @@ class SegmentPredictionResponse(BaseModel):
     is_ood: bool
 
 
+class FeatureDrift(BaseModel):
+    ks_statistic: float
+    p_value: float
+    is_drifted: bool
+
+
+class DriftResponse(BaseModel):
+    window_size: int
+    alpha: float
+    features: dict[str, FeatureDrift]
+
+
 class HealthResponse(BaseModel):
     status: str
     regression_model_loaded: bool

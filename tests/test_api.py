@@ -1,7 +1,8 @@
 # filename: tests/test_api.py
 # purpose:  FastAPI endpoint tests -- /v1/health, /v1/predict/price,
-#           /v1/predict/segment, and Pydantic input validation (422s).
-# version:  1.0
+#           /v1/predict/segment, Pydantic validation (422s), Prometheus
+#           /metrics, and /v1/drift (KS-test drift detection).
+# version:  2.0
 
 # stdlib
 import sys
@@ -89,3 +90,35 @@ def test_predict_price_normalizes_case(client):
     payload = {**VALID_DIAMOND, "color": "e", "clarity": "vs2", "cut": "ideal"}
     response = client.post("/v1/predict/price", json=payload)
     assert response.status_code == 200
+
+
+def test_metrics_endpoint(client):
+    response = client.get("/metrics")
+    assert response.status_code == 200
+    body = response.text
+    assert "prediction_requests_total" in body
+    assert "prediction_latency_seconds" in body
+
+
+def test_drift_endpoint_empty_window(client):
+    """Before DRIFT_WINDOW_SIZE predictions, drift check returns empty features."""
+    response = client.get("/v1/drift")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["window_size"] == config.DRIFT_WINDOW_SIZE
+    assert body["alpha"] == config.DRIFT_KS_ALPHA
+
+
+def test_drift_after_filling_window(client):
+    """After enough predictions to fill the deque, drift status reports per feature."""
+    for _ in range(config.DRIFT_WINDOW_SIZE):
+        client.post("/v1/predict/price", json=VALID_DIAMOND)
+
+    response = client.get("/v1/drift")
+    assert response.status_code == 200
+    body = response.json()
+    for feat in config.DRIFT_NUMERIC_FEATURES:
+        assert feat in body["features"]
+        assert "ks_statistic" in body["features"][feat]
+        assert "p_value" in body["features"][feat]
+        assert "is_drifted" in body["features"][feat]

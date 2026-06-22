@@ -199,3 +199,16 @@ TABLE_DEFAULT = 57.0  # training-set median table %
 # docker-compose this is overridden to http://fastapi:8000 (service name).
 # ---------------------------------------------------------------------------
 FASTAPI_URL = os.getenv("FASTAPI_URL", "http://localhost:8000")
+
+# ---------------------------------------------------------------------------
+# Section 12 -- Drift detection (Phase 2B)
+# KS-test on Section-5-transformed numeric features, comparing a saved
+# reference sample (from diamonds_processed.csv) against a sliding window of
+# live inference values. "Apples to apples" -- both sides are already
+# sqrt/log-transformed.
+# ---------------------------------------------------------------------------
+DRIFT_REFERENCE_SAMPLE_SIZE = 2000
+DRIFT_WINDOW_SIZE = 100
+DRIFT_KS_ALPHA = 0.05
+DRIFT_NUMERIC_FEATURES = ["carat", "volume", "depth", "table"]
+MONITORING_ARTIFACTS_DIR = ARTIFACTS_DIR / "monitoring"
