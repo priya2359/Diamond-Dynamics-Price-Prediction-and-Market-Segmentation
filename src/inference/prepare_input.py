@@ -3,7 +3,7 @@
 #           engineered, Section-5-transformed feature DataFrames expected by
 #           artifacts/regression/best_model.pkl and artifacts/clustering/kmeans_model.pkl,
 #           and run end-to-end price / segment predictions.
-# version:  1.0
+# version:  1.1
 
 # stdlib
 import logging
@@ -35,6 +35,10 @@ def _carat_category(carat: float) -> str:
         labels=config.CARAT_CATEGORY_LABELS,
         right=False,
     )[0]
+    if pd.isna(category):
+        raise ValueError(
+            f"carat={carat} falls outside category bins {config.CARAT_CATEGORY_BINS}"
+        )
     return str(category)
 
 
@@ -54,6 +58,8 @@ def build_regression_input(
     dataset's own definition of depth%); table defaults to its training median
     (config.TABLE_DEFAULT) -- both per the Section 10 input-handling decision.
     """
+    if (x + y) == 0:
+        raise ValueError(f"x + y = 0 (x={x}, y={y}); cannot compute depth percentage")
     volume = x * y * z
     depth = 200.0 * z / (x + y)
 
@@ -87,6 +93,10 @@ def build_clustering_input(
     is used to derive price_per_carat -- price itself is not a clustering
     feature (CLAUDE.md "Critical separation").
     """
+    if (x + y) == 0:
+        raise ValueError(f"x + y = 0 (x={x}, y={y}); cannot compute depth percentage")
+    if carat == 0:
+        raise ValueError(f"carat must be > 0 for price_per_carat computation, got {carat}")
     volume = x * y * z
     depth = 200.0 * z / (x + y)
     price_per_carat = price_usd / carat
@@ -115,14 +125,22 @@ def predict_price(
     color: str,
     clarity: str,
     table: float = config.TABLE_DEFAULT,
-) -> dict[str, float]:
+    return_features: bool = False,
+) -> dict:
     """Predict diamond price in USD and INR from raw physical/quality attributes."""
     df = build_regression_input(carat, x, y, z, cut, color, clarity, table)
     log_price_usd = pipeline.predict(df)[0]
     price_usd = float(np.expm1(log_price_usd))  # inverse of log1p -- NOT np.exp
+    if not np.isfinite(price_usd) or price_usd < 0:
+        raise ValueError(
+            f"Model returned invalid price: {price_usd} (log_pred={log_price_usd})"
+        )
     price_inr = price_usd * config.USD_TO_INR
     logger.info("Predicted price: $%.2f / Rs%.2f", price_usd, price_inr)
-    return {"price_usd": price_usd, "price_inr": price_inr}
+    result: dict = {"price_usd": price_usd, "price_inr": price_inr}
+    if return_features:
+        result["_features_df"] = df
+    return result
 
 
 def predict_segment(
@@ -152,10 +170,17 @@ def predict_segment(
     x_scaled = preprocessor.transform(df)
     cluster_id = int(kmeans.predict(x_scaled)[0])
 
+    clusters = cluster_profiles.get("clusters", {})
+    if str(cluster_id) not in clusters:
+        raise ValueError(
+            f"Cluster {cluster_id} not found in cluster_profiles; "
+            f"available: {list(clusters.keys())}"
+        )
+
     centroid = kmeans.cluster_centers_[cluster_id]
     centroid_distance = float(np.linalg.norm(x_scaled[0] - centroid))
 
-    profile = cluster_profiles["clusters"][str(cluster_id)]
+    profile = clusters[str(cluster_id)]
     centroid_distance_p95 = profile["centroid_distance_p95"]
 
     logger.info(

@@ -13,7 +13,7 @@ import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error, mean_squared_error, r2_score
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
@@ -115,15 +115,17 @@ def get_sklearn_models() -> dict:
 # Evaluation -- metrics computed in USD price space (expm1 of log1p target)
 # ---------------------------------------------------------------------------
 def evaluate_regression(y_true_log: np.ndarray, y_pred_log: np.ndarray) -> dict:
-    """MAE/MSE/RMSE/R2 in USD price space, plus R2 in log1p space for reference."""
+    """MAE/MSE/RMSE/R2/MAPE in USD price space, plus R2 in log1p space for reference."""
     y_true = np.expm1(y_true_log)
     y_pred = np.expm1(y_pred_log)
+    y_pred_safe = np.maximum(y_pred, 0)
     return {
         "mae": float(mean_absolute_error(y_true, y_pred)),
         "mse": float(mean_squared_error(y_true, y_pred)),
         "rmse": float(np.sqrt(mean_squared_error(y_true, y_pred))),
         "r2": float(r2_score(y_true, y_pred)),
         "r2_log_scale": float(r2_score(y_true_log, y_pred_log)),
+        "mape": float(mean_absolute_percentage_error(y_true, y_pred_safe) * 100),
     }
 
 

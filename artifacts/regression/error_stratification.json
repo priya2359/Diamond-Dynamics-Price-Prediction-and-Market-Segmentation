@@ -1,0 +1,29 @@
+{
+  "model": "xgboost",
+  "by_price_quartile": [
+    {
+      "price_quartile": "Q1 (cheap)",
+      "mae": 62.1151,
+      "mape_pct": 8.9013,
+      "count": 2690
+    },
+    {
+      "price_quartile": "Q2",
+      "mae": 105.401,
+      "mape_pct": 6.7404,
+      "count": 2691
+    },
+    {
+      "price_quartile": "Q3",
+      "mae": 250.0375,
+      "mape_pct": 6.7231,
+      "count": 2688
+    },
+    {
+      "price_quartile": "Q4 (expensive)",
+      "mae": 430.6851,
+      "mape_pct": 5.3458,
+      "count": 2690
+    }
+  ]
+}

@@ -120,5 +120,9 @@
     "silhouette_met": false,
     "dbscan_noise_target_pct": 10,
     "dbscan_noise_met": true
+  },
+  "additional_validation": {
+    "davies_bouldin": 1.4425,
+    "calinski_harabasz": 23458.7876
   }
 }

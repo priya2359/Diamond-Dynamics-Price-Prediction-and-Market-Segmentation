@@ -3,7 +3,7 @@
 #           Dynamics FastAPI service. Drift is measured on Section-5-transformed
 #           numeric features (carat, volume, depth, table) against a reference
 #           sample from diamonds_processed.csv -- apples to apples.
-# version:  1.0
+# version:  1.1
 
 # stdlib
 import logging
@@ -42,6 +42,11 @@ PREDICTION_VALUE = Histogram(
     "Predicted price (USD) distribution",
     buckets=(100, 500, 1000, 2500, 5000, 10000, 20000, 50000),
 )
+ERROR_COUNT = Counter(
+    "prediction_errors_total",
+    "Total prediction errors",
+    ["endpoint", "error_type"],
+)
 DRIFT_SCORE = Gauge(
     "data_drift_score",
     "KS statistic for feature drift (0=no drift, 1=total drift)",
@@ -72,14 +77,21 @@ _reference_data: dict[str, np.ndarray] = {}
 def load_drift_reference() -> None:
     """Load the reference sample at startup (called from lifespan)."""
     ref_path = config.MONITORING_ARTIFACTS_DIR / "drift_reference.csv"
-    df = pd.read_csv(ref_path)
-    for feat in config.DRIFT_NUMERIC_FEATURES:
-        _reference_data[feat] = df[feat].to_numpy()
-    logger.info(
-        "Drift reference loaded: %d rows, features=%s",
-        len(df),
-        config.DRIFT_NUMERIC_FEATURES,
-    )
+    try:
+        df = pd.read_csv(ref_path)
+        for feat in config.DRIFT_NUMERIC_FEATURES:
+            _reference_data[feat] = df[feat].to_numpy()
+        logger.info(
+            "Drift reference loaded: %d rows, features=%s",
+            len(df),
+            config.DRIFT_NUMERIC_FEATURES,
+        )
+    except (FileNotFoundError, pd.errors.EmptyDataError, KeyError) as exc:
+        logger.warning(
+            "Drift reference not loaded (%s: %s). Drift detection disabled.",
+            type(exc).__name__,
+            exc,
+        )
 
 
 def record_features(transformed_values: dict[str, float]) -> None:
@@ -129,6 +141,8 @@ def track_request(endpoint: str) -> Generator[None, None, None]:
     """Context manager that counts and times a prediction request."""
     REQUEST_COUNT.labels(endpoint=endpoint).inc()
     start = time.perf_counter()
-    yield
-    elapsed = time.perf_counter() - start
-    REQUEST_LATENCY.labels(endpoint=endpoint).observe(elapsed)
+    try:
+        yield
+    finally:
+        elapsed = time.perf_counter() - start
+        REQUEST_LATENCY.labels(endpoint=endpoint).observe(elapsed)

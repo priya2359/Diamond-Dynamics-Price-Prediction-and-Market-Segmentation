@@ -3,13 +3,13 @@
 # HTTP for all predictions (see streamlit_app/utils.py, FASTAPI_URL).
 # Install with: pip install -r requirements-streamlit.txt
 
-streamlit>=1.37.0
-requests>=2.31.0
+streamlit==1.58.0
+requests==2.34.2
 
 # Visual Insights tab reads static artifacts (pca_2d.csv, model_comparison.csv,
 # cluster_profiles.json) directly -- no API round-trip needed for these.
-pandas>=2.0.0
-plotly>=5.18.0
+pandas==2.3.3
+plotly==6.8.0
 
 # Config
-python-dotenv>=1.0.0
+python-dotenv==1.2.2

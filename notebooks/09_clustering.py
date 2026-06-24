@@ -359,11 +359,37 @@ save_json(metrics_artifact, config.CLUSTERING_ARTIFACTS_DIR / "metrics.json")
 # %% [markdown]
 # ## 11. Final Summary
 
+# %% [markdown]
+# ## 12. Additional Clustering Validation Metrics
+#
+# Davies-Bouldin (lower is better) and Calinski-Harabasz (higher is better)
+# complement silhouette. Consensus across multiple metrics is stronger evidence.
+
+# %% Additional metrics
+from sklearn.metrics import davies_bouldin_score, calinski_harabasz_score
+
+db_score = float(davies_bouldin_score(X_scaled, labels))
+ch_score = float(calinski_harabasz_score(X_scaled, labels))
+print(f"Davies-Bouldin Index: {db_score:.4f} (lower is better)")
+print(f"Calinski-Harabasz Index: {ch_score:.4f} (higher is better)")
+
+with mlflow.start_run(run_name="additional_validation_metrics"):
+    mlflow.log_metrics({"davies_bouldin": db_score, "calinski_harabasz": ch_score})
+
+# %% Update metrics artifact
+metrics_artifact["additional_validation"] = {
+    "davies_bouldin": round(db_score, 4),
+    "calinski_harabasz": round(ch_score, 4),
+}
+save_json(metrics_artifact, config.CLUSTERING_ARTIFACTS_DIR / "metrics.json")
+print("Updated metrics.json with Davies-Bouldin and Calinski-Harabasz scores.")
+
 # %% Summary
 print("\n=== Section 9 Summary ===")
 print(f"Chosen K: {chosen_k}")
 print(f"K-Means silhouette: {k_results[chosen_k]['silhouette']:.4f} "
       f"(target>0.4: {'MET' if k_results[chosen_k]['silhouette'] > 0.4 else 'NOT MET'})")
+print(f"Davies-Bouldin: {db_score:.4f} | Calinski-Harabasz: {ch_score:.4f}")
 print(f"Stability mean ARI: {stability['mean_ari']:.4f} (stable={stability['stable']})")
 print(f"DBSCAN: {n_dbscan_clusters} clusters, noise={noise_pct:.2f}% "
       f"(target<10%: {'MET' if noise_pct < 10 else 'NOT MET'})")

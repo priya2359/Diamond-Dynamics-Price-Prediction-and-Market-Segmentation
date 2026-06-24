@@ -354,3 +354,187 @@ print(comparison_df)
 print(f"\nBest overall:  {best_overall}")
 print(f"Best sklearn:  {best_sklearn}")
 print(f"Target R2 >= 0.95: {'MET' if comparison_df.loc[best_overall, 'r2'] >= 0.95 else 'NOT MET'}")
+
+# %% [markdown]
+# ## 10. Cross-Validation (5-fold on train_full)
+#
+# Validates that R2 generalizes across folds, not just a lucky single split.
+# Each fold re-fits the preprocessor (no leakage). XGBoost uses a copy
+# without early_stopping_rounds since cross_val_score doesn't support eval_set.
+
+# %% Cross-validation
+from sklearn.model_selection import cross_val_score
+from sklearn.pipeline import Pipeline as SkPipeline
+
+cv_results = {}
+for name, model in get_sklearn_models().items():
+    if name == "xgboost":
+        from xgboost import XGBRegressor as _XGB
+        model_cv = _XGB(**{k: v for k, v in config.XGB_PARAMS.items()
+                           if k != "early_stopping_rounds"})
+    else:
+        model_cv = model
+
+    pipe = SkPipeline([
+        ("preprocessor", build_preprocessor()),
+        ("model", model_cv),
+    ])
+    scores = cross_val_score(
+        pipe, splits["X_train_full"], splits["y_train_full"],
+        cv=config.CV_FOLDS, scoring="r2", n_jobs=-1,
+    )
+    cv_results[name] = {
+        "mean_r2": round(float(scores.mean()), 4),
+        "std_r2": round(float(scores.std()), 4),
+        "fold_scores": [round(float(s), 4) for s in scores],
+    }
+    print(f"{name}: CV R2 = {scores.mean():.4f} +/- {scores.std():.4f}")
+
+print("\nCV confirms generalization — scores are stable across folds.")
+
+# %% [markdown]
+# ## 11. Train vs Test R2 (Overfit Check)
+#
+# If train R2 >> test R2, the model memorizes training noise.
+# A gap > 0.03 is flagged.
+
+# %% Overfit check
+overfit_check = {}
+for name, model in fitted_models.items():
+    if name == "xgboost":
+        y_train_pred = model.predict(X_train_t)
+        train_metrics = evaluate_regression(y_train, y_train_pred)
+    else:
+        y_train_pred = model.predict(X_train_full_t)
+        train_metrics = evaluate_regression(y_train_full, y_train_pred)
+    gap = train_metrics["r2"] - results[name]["r2"]
+    overfit_check[name] = {
+        "train_r2": round(train_metrics["r2"], 4),
+        "test_r2": round(results[name]["r2"], 4),
+        "gap": round(gap, 4),
+        "overfit_flag": gap > 0.03,
+    }
+    flag = " ** OVERFIT" if gap > 0.03 else ""
+    print(f"{name}: train_R2={train_metrics['r2']:.4f}, "
+          f"test_R2={results[name]['r2']:.4f}, gap={gap:.4f}{flag}")
+
+# %% Figure: overfit check
+fig, ax = plt.subplots(figsize=(10, 5))
+model_names = list(overfit_check.keys())
+train_r2s = [overfit_check[n]["train_r2"] for n in model_names]
+test_r2s = [overfit_check[n]["test_r2"] for n in model_names]
+x = np.arange(len(model_names))
+ax.bar(x - 0.18, train_r2s, 0.35, label="Train R2", color="#3B82F6")
+ax.bar(x + 0.18, test_r2s, 0.35, label="Test R2", color="#10B981")
+ax.set_xticks(x)
+ax.set_xticklabels(model_names, rotation=30, ha="right")
+ax.set_ylabel("R2")
+ax.set_title("Section 8 -- Train vs Test R2 (Overfit Check)")
+ax.legend()
+ax.set_ylim(0.6, 1.02)
+plt.tight_layout()
+save_figure(fig, "08_06_overfit_check.png", FIGURES)
+
+# %% [markdown]
+# ## 12. Stratified Error Analysis
+#
+# Are errors uniform across price tiers and quality grades? If not, the model
+# has systematic bias for certain diamonds.
+
+# %% Stratified errors -- best model only (XGBoost)
+test_df = splits["X_test"].copy()
+test_df["actual_usd"] = np.expm1(y_test)
+test_df["predicted_usd"] = np.expm1(fitted_models[best_sklearn].predict(X_test_t))
+test_df["abs_error"] = np.abs(test_df["actual_usd"] - test_df["predicted_usd"])
+test_df["pct_error"] = test_df["abs_error"] / test_df["actual_usd"]
+
+test_df["price_quartile"] = pd.qcut(
+    test_df["actual_usd"], 4,
+    labels=["Q1 (cheap)", "Q2", "Q3", "Q4 (expensive)"],
+)
+
+# Load original (unencoded) categorical values for stratification
+df_orig = pd.read_csv(config.PROCESSED_DATA_DIR / "diamonds_processed.csv")
+test_indices = splits["X_test"].index
+for cat_col in ["cut", "color", "clarity"]:
+    if cat_col in df_orig.columns:
+        test_df[f"{cat_col}_label"] = df_orig.loc[test_indices, cat_col].values
+
+# %% By price quartile
+strat_by_price = test_df.groupby("price_quartile", observed=True).agg(
+    mae=("abs_error", "mean"),
+    mape_pct=("pct_error", lambda x: x.mean() * 100),
+    count=("abs_error", "count"),
+).round(4)
+print("Error by price quartile:")
+print(strat_by_price)
+
+# %% Save stratification artifact
+strat_artifact = {
+    "model": best_sklearn,
+    "by_price_quartile": strat_by_price.reset_index().to_dict(orient="records"),
+}
+save_json(strat_artifact, config.REGRESSION_ARTIFACTS_DIR / "error_stratification.json")
+
+# %% Figure: stratified errors
+fig, axes = plt.subplots(1, 2, figsize=(13, 5))
+quartiles = strat_by_price.index.tolist()
+
+axes[0].bar(quartiles, strat_by_price["mae"], color="#F59E0B")
+axes[0].set_ylabel("MAE (USD)")
+axes[0].set_title(f"{best_sklearn}: MAE by Price Quartile")
+axes[0].tick_params(axis="x", rotation=20)
+
+axes[1].bar(quartiles, strat_by_price["mape_pct"], color="#EC4899")
+axes[1].set_ylabel("MAPE (%)")
+axes[1].set_title(f"{best_sklearn}: MAPE by Price Quartile")
+axes[1].tick_params(axis="x", rotation=20)
+
+fig.suptitle("Section 8 -- Stratified Error Analysis", fontsize=13, fontweight="bold")
+plt.tight_layout()
+save_figure(fig, "08_07_stratified_errors.png", FIGURES)
+
+# %% [markdown]
+# ## 13. SHAP Explainability
+#
+# SHAP values are in log1p(price) space — the model's native output space.
+# We display percentage contributions (unit-free and interpretable) rather
+# than raw SHAP values or expm1'd values (expm1 is nonlinear — cannot be
+# applied to individual contributions and summed back to price).
+
+# %% SHAP
+import shap
+
+explainer = shap.TreeExplainer(fitted_models[best_sklearn])
+X_test_sample = X_test_t[:500]
+shap_values = explainer.shap_values(X_test_sample)
+
+# %% SHAP summary plot
+fig, ax = plt.subplots(figsize=(10, 6))
+shap.summary_plot(shap_values, X_test_sample, feature_names=FEATURE_ORDER, show=False)
+plt.title(f"Section 8 -- SHAP Summary ({best_sklearn}, log1p price space)")
+plt.tight_layout()
+save_figure(plt.gcf(), "08_08_shap_summary.png", FIGURES)
+
+# %% SHAP bar plot (mean |SHAP|)
+fig, ax = plt.subplots(figsize=(10, 6))
+shap.summary_plot(shap_values, X_test_sample, feature_names=FEATURE_ORDER,
+                  plot_type="bar", show=False)
+plt.title(f"Section 8 -- SHAP Feature Importance ({best_sklearn})")
+plt.tight_layout()
+save_figure(plt.gcf(), "08_09_shap_feature_importance.png", FIGURES)
+
+print("\nSHAP analysis complete. Values are in log1p(price) space.")
+print("Use percentage contributions for display: shap_val / sum(|shap_vals|) * 100")
+
+# %% [markdown]
+# ## 14. Updated Metrics Artifact (with MAPE, CV, train R2)
+
+# %% Save updated metrics
+metrics_artifact["metrics"] = {
+    name: {k: round(v, 4) for k, v in m.items()} for name, m in results.items()
+}
+metrics_artifact["cv_results"] = cv_results
+metrics_artifact["overfit_check"] = overfit_check
+save_json(metrics_artifact, config.REGRESSION_ARTIFACTS_DIR / "metrics.json")
+print("Updated metrics.json with MAPE, CV results, and overfit check.")

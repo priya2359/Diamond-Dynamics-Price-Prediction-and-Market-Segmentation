@@ -78,6 +78,11 @@ MLFLOW_TRACKING_URI = os.getenv(
 MLFLOW_EXPERIMENT_REGRESSION = "diamond_price_regression"
 
 # ---------------------------------------------------------------------------
+# Cross-validation
+# ---------------------------------------------------------------------------
+CV_FOLDS = 5
+
+# ---------------------------------------------------------------------------
 # Section 8 — Regression: train/val/test split
 # 80% train_full / 20% test (random_state=RANDOM_STATE).
 # train_full is further split 80/20 -> 64% train / 16% val (overall),
@@ -199,6 +204,7 @@ TABLE_DEFAULT = 57.0  # training-set median table %
 # docker-compose this is overridden to http://fastapi:8000 (service name).
 # ---------------------------------------------------------------------------
 FASTAPI_URL = os.getenv("FASTAPI_URL", "http://localhost:8000")
+RATE_LIMIT = os.getenv("RATE_LIMIT", "60/minute")
 
 # ---------------------------------------------------------------------------
 # Section 12 -- Drift detection (Phase 2B)

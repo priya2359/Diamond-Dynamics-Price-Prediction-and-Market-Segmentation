@@ -1,0 +1,42 @@
+# filename: monitoring/prometheus/alert_rules.yml
+# purpose:  Prometheus alert rules for Diamond Dynamics API monitoring
+# version:  1.0
+
+groups:
+  - name: diamond-dynamics
+    rules:
+      - alert: HighErrorRate
+        expr: rate(prediction_errors_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High prediction error rate ({{ $value | humanize }}/s)"
+          description: "Prediction error rate has exceeded 0.1/s for 2 minutes."
+
+      - alert: HighLatencyP95
+        expr: histogram_quantile(0.95, rate(prediction_latency_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "P95 prediction latency > 2s"
+          description: "95th percentile prediction latency has exceeded 2 seconds for 5 minutes."
+
+      - alert: DriftDetected
+        expr: data_drift_detected == 1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Data drift detected on feature {{ $labels.feature }}"
+          description: "KS-test detected significant distribution shift on {{ $labels.feature }} for 10+ minutes. Review /v1/drift endpoint and consider retraining."
+
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Diamond Dynamics API is down"
+          description: "Prometheus cannot reach the FastAPI service for 1+ minute."

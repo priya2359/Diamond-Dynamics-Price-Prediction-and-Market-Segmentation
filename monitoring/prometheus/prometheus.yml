@@ -1,10 +1,13 @@
 # filename: monitoring/prometheus/prometheus.yml
 # purpose:  Prometheus scrape config for the Diamond Dynamics FastAPI service.
-# version:  1.0
+# version:  1.1
 
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
+
+rule_files:
+  - "alert_rules.yml"
 
 scrape_configs:
   - job_name: "diamond-dynamics-api"

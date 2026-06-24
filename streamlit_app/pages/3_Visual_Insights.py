@@ -34,7 +34,7 @@ with tab_segments:
         title="K-Means Segments (K=2) -- PCA 2D Projection (58.8% variance explained)",
         opacity=0.5,
     )
-    st.plotly_chart(fig, width='stretch')
+    st.plotly_chart(fig, use_container_width=True)
 
     st.subheader("Segment Profiles")
     profile_rows = [
@@ -51,35 +51,35 @@ with tab_segments:
         for profile in cluster_profiles["clusters"].values()
     ]
     profile_df = pd.DataFrame(profile_rows)
-    st.dataframe(profile_df, width='stretch', hide_index=True)
+    st.dataframe(profile_df, use_container_width=True, hide_index=True)
 
     col1, col2 = st.columns(2)
     with col1:
         st.plotly_chart(
             px.bar(profile_df, x="Segment", y="Avg Carat", color="Segment", title="Average Carat by Segment"),
-            width='stretch',
+            use_container_width=True,
         )
     with col2:
         st.plotly_chart(
             px.bar(profile_df, x="Segment", y="Avg Price (INR)", color="Segment", title="Average Price (INR) by Segment"),
-            width='stretch',
+            use_container_width=True,
         )
 
 with tab_models:
     st.subheader("Regression Model Comparison (Test Set, USD)")
     comparison_df = load_model_comparison().reset_index().rename(columns={"index": "model"})
-    st.dataframe(comparison_df, width='stretch', hide_index=True)
+    st.dataframe(comparison_df, use_container_width=True, hide_index=True)
 
     col1, col2 = st.columns(2)
     with col1:
         st.plotly_chart(
             px.bar(comparison_df, x="model", y="r2", title="R2 Score by Model (USD)", range_y=[0, 1]),
-            width='stretch',
+            use_container_width=True,
         )
     with col2:
         st.plotly_chart(
             px.bar(comparison_df, x="model", y="mae", title="MAE (USD) by Model"),
-            width='stretch',
+            use_container_width=True,
         )
 
 with tab_eda:
@@ -95,4 +95,4 @@ with tab_eda:
     for filename, caption in gallery:
         path = Path(config.FIGURES_DIR) / filename
         if path.exists():
-            st.image(str(path), caption=caption, width='stretch')
+            st.image(str(path), caption=caption, use_container_width=True)
