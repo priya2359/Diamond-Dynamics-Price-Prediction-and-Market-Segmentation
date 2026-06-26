@@ -2,10 +2,13 @@
 # purpose:  Shared fixtures for all test modules -- single source of truth
 # version:  1.0
 
+import os
 import sys
 from pathlib import Path
 
 import pytest
+
+os.environ["TESTING"] = "1"
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:

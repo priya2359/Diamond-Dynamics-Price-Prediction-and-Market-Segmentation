@@ -10,6 +10,7 @@
 # stdlib
 import json
 import logging
+import os
 import uuid
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -71,7 +72,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     models.clear()
 
 
-limiter = Limiter(key_func=get_remote_address)
+limiter = Limiter(
+    key_func=get_remote_address,
+    enabled=not os.environ.get("TESTING"),
+)
 
 app = FastAPI(title="Diamond Dynamics API", version="3.0", lifespan=lifespan)
 app.state.limiter = limiter
