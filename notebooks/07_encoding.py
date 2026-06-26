@@ -5,7 +5,7 @@
 # %% [markdown]
 # # Section 7 -- Ordinal Encoding
 # Replaces string quality-grade columns with integer codes preserving grade order.
-# Encoding orders are fixed by gemological standards (CLAUDE.md "Exact Encoding Orders").
+# Encoding orders are fixed by gemological standards.
 #
 # | Feature       | Order (ascending quality)                          | Codes |
 # |---------------|----------------------------------------------------|-------|
@@ -166,7 +166,7 @@ encoding_artifact = {
     "description": (
         "Ordinal encoding map for quality-grade categorical features. "
         "All codes are 0-indexed (0 = lowest quality). "
-        "Ordering is fixed by gemological standards -- see CLAUDE.md Exact Encoding Orders."
+        "Ordering is fixed by gemological standards."
     ),
     "features": {
         col: {

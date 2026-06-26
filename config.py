@@ -45,7 +45,7 @@ USD_TO_INR = float(os.getenv("USD_TO_INR", "83.5"))
 TEST_SIZE = 0.2
 
 # ---------------------------------------------------------------------------
-# Ordinal encoding orders (FIXED — see CLAUDE.md "Exact Encoding Orders")
+# Ordinal encoding orders (FIXED — gemological standards)
 # Lower number = lower quality/value, higher number = higher quality/value.
 # Wrong order silently corrupts model training — do not change without re-validating.
 # ---------------------------------------------------------------------------
@@ -54,7 +54,7 @@ COLOR_ORDER = ["J", "I", "H", "G", "F", "E", "D"]
 CLARITY_ORDER = ["I1", "SI2", "SI1", "VS2", "VS1", "VVS2", "VVS1", "IF"]
 
 # ---------------------------------------------------------------------------
-# Carat category bins (per GUVI spec)
+# Carat category bins
 # ---------------------------------------------------------------------------
 CARAT_CATEGORY_BINS = [0, 0.5, 1.5, float("inf")]
 CARAT_CATEGORY_LABELS = ["Light", "Medium", "Heavy"]
@@ -185,7 +185,7 @@ CLUSTER_NAME_SIZE_TIERS = ["Compact", "Balanced", "Heavy"]
 # Section 10 -- Streamlit input ranges/defaults
 # Bounds and defaults from data/processed/diamonds_clean.csv .describe().
 # `table` is defaulted (not collected) -- RF importance is negligible (Section 6),
-# keeping Module 1/2 forms aligned with the GUVI spec inputs (carat, x, y, z,
+# keeping Module 1/2 forms aligned with the standard inputs (carat, x, y, z,
 # cut, color, clarity). `depth` is computed exactly as 200*z/(x+y) (the
 # diamonds dataset's own definition of depth%), also not collected.
 # ---------------------------------------------------------------------------

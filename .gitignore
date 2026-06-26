@@ -30,8 +30,13 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Claude Code local state
+# Local state
 /.claude/
+
+# Project notes (kept locally, not in repo)
+CLAUDE.md
+INTERVIEW_PREP.md
+*.pdf
 
 # Logs
 /logs/

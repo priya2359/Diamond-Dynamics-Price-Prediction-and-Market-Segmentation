@@ -15,7 +15,7 @@ _RANGES = config.INPUT_FEATURE_RANGES
 
 
 class DiamondInput(BaseModel):
-    """Raw diamond attributes -- the 7 GUVI-spec inputs shared by both modules."""
+    """Raw diamond attributes -- the 7 standard inputs shared by both modules."""
 
     carat: float = Field(..., ge=_RANGES["carat"]["min"], le=_RANGES["carat"]["max"])
     x: float = Field(..., ge=_RANGES["x"]["min"], le=_RANGES["x"]["max"])

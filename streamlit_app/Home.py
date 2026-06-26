@@ -11,7 +11,7 @@ st.subheader("Diamond Price Prediction & Market Segmentation")
 
 st.markdown(
     """
-Welcome to **Diamond Dynamics** -- a GUVI HCL capstone project applying both
+Welcome to **Diamond Dynamics** -- a capstone project applying both
 **supervised regression** and **unsupervised clustering** to the diamonds dataset
 (53,940 records).
 

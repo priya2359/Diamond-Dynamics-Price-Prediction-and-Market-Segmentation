@@ -1,5 +1,5 @@
 {
-  "description": "Ordinal encoding map for quality-grade categorical features. All codes are 0-indexed (0 = lowest quality). Ordering is fixed by gemological standards -- see CLAUDE.md Exact Encoding Orders.",
+  "description": "Ordinal encoding map for quality-grade categorical features. All codes are 0-indexed (0 = lowest quality). Ordering is fixed by gemological standards.",
   "features": {
     "cut": {
       "categories_in_order": [

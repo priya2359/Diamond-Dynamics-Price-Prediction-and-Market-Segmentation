@@ -56,7 +56,7 @@ def load_model_comparison() -> pd.DataFrame:
 def render_diamond_input_form(key_prefix: str) -> dict:
     """
     Shared diamond attribute form -- carat, x, y, z, cut, color, clarity
-    (GUVI Module 1/2 inputs). depth and table are not collected: depth is
+    (Module 1/2 inputs). depth and table are not collected: depth is
     derived exactly as 200*z/(x+y), table defaults to its training median
     (config.TABLE_DEFAULT) -- see Section 10 input-handling decision.
     """

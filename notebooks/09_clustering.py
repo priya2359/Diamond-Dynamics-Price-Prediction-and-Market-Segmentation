@@ -30,7 +30,7 @@
 # - Hierarchical clustering: SKIPPED. Full agglomerative clustering is O(n^2)
 #   memory/time at 53,794 rows -- infeasible. A sample-based dendrogram (e.g. 2,000
 #   rows = 3.7% of data) would reflect the sample, not the dataset, and is not
-#   reliable evidence. DBSCAN already satisfies the GUVI doc's optional "try
+#   reliable evidence. DBSCAN already satisfies the optional "try
 #   different clustering techniques" requirement.
 # - Cluster naming: dynamic, NOT forced to K=3. Each cluster gets a price tier
 #   (Affordable/Mid-range/Premium) and a size tier (Compact/Balanced/Heavy), each

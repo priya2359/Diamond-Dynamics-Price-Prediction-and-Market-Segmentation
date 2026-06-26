@@ -91,7 +91,7 @@ def build_clustering_input(
     Engineer + Section-5-transform a single raw diamond into the 9-feature
     DataFrame expected by kmeans_model.pkl. price_usd (from predict_price)
     is used to derive price_per_carat -- price itself is not a clustering
-    feature (CLAUDE.md "Critical separation").
+    feature -- price itself is not a clustering feature.
     """
     if (x + y) == 0:
         raise ValueError(f"x + y = 0 (x={x}, y={y}); cannot compute depth percentage")

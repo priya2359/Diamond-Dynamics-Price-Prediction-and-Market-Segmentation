@@ -132,7 +132,7 @@ def find_dbscan_eps(X: np.ndarray, min_samples: int) -> dict:
 # ---------------------------------------------------------------------------
 # Dynamic cluster naming -- tiers are RELATIVE (tertile rank among the other
 # clusters in the same run), so this works for any K in config.K_RANGE without
-# forcing K=3 to match the GUVI doc's illustrative 3-cluster example.
+# forcing K=3 to match the illustrative 3-cluster example.
 # ---------------------------------------------------------------------------
 def tertile_label(value: float, all_values: list[float], labels: list[str]) -> str:
     """Rank `value` among `all_values` (ascending) and bucket into low/mid/high labels."""

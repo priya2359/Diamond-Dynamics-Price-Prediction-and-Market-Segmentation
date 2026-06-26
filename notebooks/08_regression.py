@@ -21,7 +21,7 @@
 # - Hyperparameters: config.py (LINEAR_PARAMS, DT_PARAMS, RF_PARAMS, XGB_PARAMS,
 #   KNN_PARAMS, ANN_ARCHITECTURE, ANN_TRAINING).
 # - ANN gets its OWN preprocessor instance (separate StandardScaler), per
-#   CLAUDE.md rule -- not shared with the sklearn Pipeline.
+#   ANN has its own StandardScaler -- not shared with the sklearn Pipeline.
 # - Metrics computed in USD price space (expm1 of the log1p target), per
 #   transform_params.json price_transform.inverse = expm1.
 #

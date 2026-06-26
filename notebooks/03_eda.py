@@ -1,5 +1,5 @@
 # filename: notebooks/03_eda.py
-# purpose:  Section 3 — Exploratory Data Analysis (8 GUVI required + 3 extras)
+# purpose:  Section 3 — Exploratory Data Analysis (8 required + 3 extras)
 # version:  1.0
 
 # %% [markdown]
@@ -37,7 +37,7 @@ print("Loaded cleaned data:", df.shape)
 
 # %% [markdown]
 # ## Plot 1 — Distribution of Numeric Features
-# GUVI requirement: distribution plots for price, carat, x, y, z
+# Required: distribution plots for price, carat, x, y, z
 
 # %% Plot 1
 numeric_cols = ["price", "carat", "x", "y", "z"]
@@ -57,7 +57,7 @@ save_figure(fig, "03_01_distributions_numeric.png", FIGURES)
 
 # %% [markdown]
 # ## Plot 2 — Count Plots for Categorical Features
-# GUVI requirement: count plots for cut, color, clarity
+# Required: count plots for cut, color, clarity
 
 # %% Plot 2
 cat_cols = ["cut", "color", "clarity"]
@@ -84,7 +84,7 @@ save_figure(fig, "03_02_countplots_categorical.png", FIGURES)
 
 # %% [markdown]
 # ## Plot 3 — Price Variation by Categorical Features (Boxplots)
-# GUVI requirement: price variation by cut, color, clarity
+# Required: price variation by cut, color, clarity
 
 # %% Plot 3
 fig, axes = plt.subplots(1, 3, figsize=(18, 6))
@@ -104,7 +104,7 @@ save_figure(fig, "03_03_price_boxplots_categorical.png", FIGURES)
 
 # %% [markdown]
 # ## Plot 4 — Correlation Heatmap
-# GUVI requirement: correlation heatmap of numerical features
+# Required: correlation heatmap of numerical features
 
 # %% Plot 4
 numeric_df = df[["carat", "depth", "table", "price", "x", "y", "z"]]
@@ -122,7 +122,7 @@ save_figure(fig, "03_04_correlation_heatmap.png", FIGURES)
 
 # %% [markdown]
 # ## Plot 5 — Scatter Matrix (carat, x, y, z, price)
-# GUVI requirement: scatterplot matrix
+# Required: scatterplot matrix
 
 # %% Plot 5 (sample 4000 rows for render speed)
 sample = df[["carat", "x", "y", "z", "price"]].sample(4000, random_state=config.RANDOM_STATE)
@@ -134,7 +134,7 @@ save_figure(fig, "03_05_scatter_matrix.png", FIGURES)
 
 # %% [markdown]
 # ## Plot 6 — Pairplot
-# GUVI requirement: sns.pairplot
+# Required: sns.pairplot
 
 # %% Plot 6 (sample 3000 rows; pairplot is expensive on 53K rows)
 sample_pp = df[["carat", "price", "depth", "table", "cut"]].sample(
@@ -148,7 +148,7 @@ save_figure(g.figure, "03_06_pairplot.png", FIGURES)
 
 # %% [markdown]
 # ## Plot 7 — Carat vs Price Regression Lineplot
-# GUVI requirement: carat vs price regression lineplot
+# Required: carat vs price regression lineplot
 
 # %% Plot 7 (sample 5000 for speed)
 sample_reg = df[["carat", "price"]].sample(5000, random_state=config.RANDOM_STATE)
@@ -165,7 +165,7 @@ save_figure(fig, "03_07_carat_vs_price_regplot.png", FIGURES)
 
 # %% [markdown]
 # ## Plot 8 — Average Price per Cut, Color, Clarity (Bar Plots)
-# GUVI requirement: average price bar plots
+# Required: average price bar plots
 
 # %% Plot 8
 fig, axes = plt.subplots(1, 3, figsize=(18, 6))
@@ -255,7 +255,7 @@ save_figure(fig, "03_11_carat_price_by_cut.png", FIGURES)
 
 # %% [markdown]
 # ## Summary
-# All 8 GUVI-required figures + 3 extras saved to `docs/figures/`.
+# All 8 required figures + 3 extras saved to `docs/figures/`.
 
 # %% Summary
 import os
