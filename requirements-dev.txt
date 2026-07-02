@@ -9,7 +9,7 @@ mypy==2.1.0
 pre-commit==4.6.0
 
 # Section 11 -- FastAPI TestClient (api/main.py tests)
-httpx==0.28.1
+httpx2==2.5.0
 
 # Section 9 -- DBSCAN eps selection (KneeLocator), notebook-only analysis
 kneed==0.8.6

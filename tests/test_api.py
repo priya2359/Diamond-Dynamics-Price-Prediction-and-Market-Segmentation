@@ -13,12 +13,12 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 # third-party
-import pytest
-from fastapi.testclient import TestClient
+import pytest  # noqa: E402
+from fastapi.testclient import TestClient  # noqa: E402
 
 # internal
-import config
-from api.main import app
+import config  # noqa: E402
+from api.main import app  # noqa: E402
 
 VALID_DIAMOND = {
     "carat": 0.7,

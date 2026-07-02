@@ -5,7 +5,7 @@
 
 # stdlib
 import logging
-from typing import Tuple
+from typing import Any
 
 # third-party
 import numpy as np
@@ -139,7 +139,8 @@ def build_ann(input_dim: int) -> keras.Model:
 
     inputs = keras.Input(shape=(input_dim,))
     x = inputs
-    for layer_cfg in arch["hidden_layers"]:
+    hidden_layers: list[dict[str, Any]] = arch["hidden_layers"]  # type: ignore[assignment]
+    for layer_cfg in hidden_layers:
         x = layers.Dense(layer_cfg["units"], activation=layer_cfg["activation"])(x)
         if layer_cfg.get("batch_norm"):
             x = layers.BatchNormalization()(x)

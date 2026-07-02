@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 # retraining all downstream models.
 # ---------------------------------------------------------------------------
 _LOG1P_COLS = ["price", "dimension_ratio"]
-_SQRT_COLS  = ["carat", "volume", "table", "price_per_carat"]
+_SQRT_COLS = ["carat", "volume", "table", "price_per_carat"]
 # x, y, z, depth: skew < 0.5 after cleaning — no transform needed.
 # price_inr: display column only, kept in natural units.
 

@@ -39,6 +39,7 @@ from api.monitoring import (
 from api.schemas import (
     DiamondInput,
     DriftResponse,
+    FeatureDrift,
     HealthResponse,
     PricePredictionResponse,
     SegmentPredictionResponse,
@@ -107,7 +108,7 @@ def drift_status() -> DriftResponse:
     return DriftResponse(
         window_size=config.DRIFT_WINDOW_SIZE,
         alpha=config.DRIFT_KS_ALPHA,
-        features=results,
+        features={k: FeatureDrift(**v) for k, v in results.items()},
     )
 
 

@@ -126,7 +126,6 @@ class TestEncodeOrdinal:
 class TestBuildOrdinalEncoder:
     def test_categories_match_config(self):
         encoder = build_ordinal_encoder()
-        sorted_cols = sorted(["cut", "color", "clarity", "carat_category"])
         expected_cats = [
             config.CARAT_CATEGORY_LABELS,
             config.CLARITY_ORDER,
