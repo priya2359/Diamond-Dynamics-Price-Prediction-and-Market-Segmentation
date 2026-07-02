@@ -203,7 +203,11 @@ TABLE_DEFAULT = 57.0  # training-set median table %
 # Default targets a locally-running `uvicorn api.main:app` process; in
 # docker-compose this is overridden to http://fastapi:8000 (service name).
 # ---------------------------------------------------------------------------
-FASTAPI_URL = os.getenv("FASTAPI_URL", "http://localhost:8000")
+_fastapi_url = os.getenv("FASTAPI_URL", "http://localhost:8000")
+# Render's fromService injects a bare hostname (no scheme). Prepend https:// when needed.
+if _fastapi_url and not _fastapi_url.startswith(("http://", "https://")):
+    _fastapi_url = f"https://{_fastapi_url}"
+FASTAPI_URL = _fastapi_url
 RATE_LIMIT = os.getenv("RATE_LIMIT", "60/minute")
 
 # ---------------------------------------------------------------------------

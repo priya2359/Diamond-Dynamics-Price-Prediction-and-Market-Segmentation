@@ -1,0 +1,32 @@
+services:
+  # ── FastAPI (ML inference + monitoring metrics) ──────────────────────────────
+  - type: web
+    name: diamond-dynamics-api
+    env: docker
+    dockerfilePath: ./api/Dockerfile
+    dockerContext: .
+    plan: free
+    port: 8000
+    healthCheckPath: /v1/health
+    envVars:
+      - key: USD_TO_INR
+        value: "83.5"
+      - key: RATE_LIMIT
+        value: "60/minute"
+
+  # ── Streamlit (user-facing prediction UI) ────────────────────────────────────
+  - type: web
+    name: diamond-dynamics-app
+    env: docker
+    dockerfilePath: ./streamlit_app/Dockerfile
+    dockerContext: .
+    plan: free
+    port: 8501
+    envVars:
+      - key: FASTAPI_URL
+        fromService:
+          name: diamond-dynamics-api
+          type: web
+          property: host
+      - key: USD_TO_INR
+        value: "83.5"
