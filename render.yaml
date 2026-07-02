@@ -6,7 +6,6 @@ services:
     dockerfilePath: ./api/Dockerfile
     dockerContext: .
     plan: free
-    port: 8000
     healthCheckPath: /v1/health
     envVars:
       - key: USD_TO_INR
@@ -21,7 +20,6 @@ services:
     dockerfilePath: ./streamlit_app/Dockerfile
     dockerContext: .
     plan: free
-    port: 8501
     envVars:
       - key: FASTAPI_URL
         fromService:
