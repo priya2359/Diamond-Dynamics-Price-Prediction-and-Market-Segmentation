@@ -22,9 +22,6 @@ services:
     plan: free
     envVars:
       - key: FASTAPI_URL
-        fromService:
-          name: diamond-dynamics-api
-          type: web
-          property: host
+        value: "https://diamond-dynamics-api.onrender.com"
       - key: USD_TO_INR
         value: "83.5"
