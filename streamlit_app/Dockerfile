@@ -22,4 +22,4 @@ COPY docs/figures/ docs/figures/
 
 EXPOSE 8501
 
-CMD ["streamlit", "run", "streamlit_app/Home.py", "--server.address=0.0.0.0", "--server.port=8501"]
+CMD ["sh", "-c", "streamlit run streamlit_app/Home.py --server.address=0.0.0.0 --server.port=${PORT:-8501} --server.headless=true"]
